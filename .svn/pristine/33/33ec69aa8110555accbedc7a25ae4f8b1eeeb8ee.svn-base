@@ -1,0 +1,557 @@
+<template>
+  <div id="goods-detail">
+    <common-header :back-handler="back" :title="title"></common-header>
+
+    <div class="wrapper" ref="wrapper">
+      <div class="content">
+        <div class="photo">
+          <div v-if="goodsDetail.photo !== undefined"
+               v-lazy:background-image="goodsDetail.photo + '?x-oss-process=image/resize,w_180'">
+          </div>
+          <div v-if="goodsDetail.photo === undefined">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-tupian"></use>
+            </svg>
+          </div>
+        </div>
+        <div class="description">
+          <div>
+            <span>{{goodsDetail.name}}</span>
+          </div>
+          <div>
+          <span>
+            <span :style="goodsCount.selectedCount > 0 ? 'text-decoration:line-through;' : ''"
+                  v-if="goodsDetail.inventory_status === 1">剩余{{goodsDetail.quantity}}份</span>
+            <span v-if="goodsDetail.inventory_status === 1 && goodsCount.selectedCount > 0">
+              - 剩余{{goodsDetail.quantity - goodsCount.selectedCount}}份
+            </span>
+          </span>
+            <div>
+              <span>${{computedGoodsAmount()}}</span>
+              <span class="discount-amount">${{appUtil.amountFormat(goodsDetail.amount)}}</span>
+            </div>
+          </div>
+          <div class="spec-list">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="left" @click.stop="toShopCart()">
+        <div :class="goodsCount.count > 0 ? 'shop-car-icon-active' : 'shop-car-icon'">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-gouwuche"></use>
+          </svg>
+        </div>
+        <div class="goods-count" v-if="goodsCount.count>0">
+          <number-count :count="goodsCount.count"></number-count>
+        </div>
+      </div>
+      <div class="right">
+        <div class="right-box">
+          <div @click="openGoodsSpecifications('cart')"
+               :class="goodsDetail.quantity - currentGoods.count > 0 || (selectedCount > 0 && goodsDetail.quantity - currentGoods.count - selectedCount >= 0) || goodsDetail.inventory_status === 0 ? '' : 'right-disable'">
+            <div>
+              加入购物车
+            </div>
+          </div>
+        </div>
+      </div>
+      <goods-specifications
+        v-if="showGoodsSpecifications"
+        @addGoodsCount="addGoodsCount"
+        @subtractGoodsCount="subtractGoodsCount"
+        @addToShoppingCart="addToShoppingCart"
+        @buyNow="buyNow"
+        @close="closeGoodsSpecifications"
+        :current-goods="currentGoods"
+        :operation-type="operationType"
+        :selected-count="selectedCount"
+        :goods-detail="goodsDetail"></goods-specifications>
+      <loading v-if="isLoading" height="calc(100vh - 44px)" top="44px"></loading>
+    </div>
+</template>
+
+<script>
+  import CommonHeader from "../components/CommonHeader";
+  import util from '../util';
+  import httpClient from '../http';
+  import Loading from "../components/Loading";
+  import NumberCount from "../components/NumberCount";
+  import BScroll from 'better-scroll'
+  import GoodsSpecifications from "../components/GoodsSpecifications";
+
+  let fly = require('../assets/js/fly');
+
+  export default {
+    name: "GoodsDetail",
+    components: {GoodsSpecifications, NumberCount, Loading, CommonHeader},
+    data: function () {
+      return {
+        title: '',
+        fromObj: '',
+        goodsDetail: {},
+        isLoading: false,
+        selectedCount: 1,
+        shopCartCount: 0,
+        showGoodsSpecifications: false,
+        operationType: '',
+        goodsInfo: {},
+        goodsSpecInfo: []
+      }
+    },
+    computed: {
+      goodsCount: function () {
+        let count = 0;
+        let amount = 0;
+        let selectedCount = 0;
+        if (this.$store.getters.shopCartList !== null) {
+          this.$store.getters.shopCartList.forEach(goods => {
+            count += goods.count;
+            amount = util.amountAdd(amount, util.amountMul(goods.amount, goods.count));
+            if (goods.id === this.goodsDetail.id) {
+              selectedCount = goods.count;
+            }
+          });
+        }
+        this.shopCartCount = selectedCount;
+        return {
+          count: count,
+          amount: util.amountHandle(amount),
+          selectedCount: selectedCount,
+        }
+      },
+      currentGoods: function () {
+        if (this.$store.getters.shopCartList === null) {
+          return {
+            count: 0
+          }
+        }
+        let find = this.$store.getters.shopCartList.find(item => item.id === this.goodsDetail.id);
+        if (find === undefined) {
+          return {
+            count: 0
+          }
+        }
+        return find;
+      }
+    },
+    methods: {
+      back() {
+        if (this.fromObj !== '' && this.fromObj.path !== '/') {
+          this.$router.replace({
+            path: this.fromObj.path,
+            name: this.fromObj.name,
+            query: this.fromObj.query,
+            params: this.fromObj.params
+          })
+        } else {
+          this.$router.replace({
+            path: "/home/"
+          })
+        }
+      },
+      computedGoodsAmount() {
+        return this.appUtil.amountFormat(this.appUtil.round(this.appUtil.amountMul(this.goodsDetail.amount, this.goodsDetail.discount), 2))
+      },
+      openGoodsSpecifications(type) {
+        console.log(this.goodsDetail)
+        if (this.goodsDetail.inventory_status === 1) {
+          if (this.selectedCount > 0) {
+            if (this.goodsDetail.quantity - this.shopCartCount - this.selectedCount < 0) {
+              this.$danNotice("剩余份数为0");
+              return;
+            }
+          } else {
+            if (this.goodsDetail.quantity - this.shopCartCount <= 0) {
+              this.$danNotice("剩余份数为0");
+              return;
+            }
+          }
+        }
+        this.operationType = type;
+        console.log(this.goodsCount.selectedCount, type)
+        this.selectedCount = this.goodsCount.selectedCount
+        // this.selectedCount = 1;
+        this.showGoodsSpecifications = true;
+      },
+      closeGoodsSpecifications() {
+        this.showGoodsSpecifications = false;
+      },
+      toShopCart() {
+        this.$router.replace({
+          path: '/home/shoppingCart',
+        });
+      },
+      subtractGoodsCount() {
+        if (this.selectedCount === 1) {
+          return;
+        }
+        this.selectedCount--;
+      },
+      addGoodsCount() {
+        if (this.goodsDetail.inventory_status === 1 && this.goodsDetail.quantity - this.shopCartCount - this.selectedCount > 0) {
+          this.selectedCount++;
+        }
+        if (this.goodsDetail.inventory_status === 0) {
+          this.selectedCount++;
+        }
+      },
+      addToShoppingCart() {
+        if (this.goodsDetail.inventory_status === 1) {
+          if (this.selectedCount > 0) {
+            if (this.goodsDetail.quantity - this.shopCartCount - this.selectedCount < 0) {
+              return;
+            }
+          } else {
+            if (this.goodsDetail.quantity - this.shopCartCount <= 0) {
+              return;
+            }
+          }
+        }
+        // this.flyBall(event);
+        if (this.selectedCount <= 0) {
+          this.selectedCount = 1;
+        }
+
+        let shopCartList = this.$store.getters.shopCartList;
+
+        if (shopCartList === null) {
+          if (this.goodsDetail.quantity <= 0 && this.goodsDetail.inventory_status === 1) return;
+          shopCartList = [];
+          shopCartList.push(this.getBeginAdd())
+        } else {
+          let one = shopCartList.find(item => item.id === this.goodsDetail.id);
+          if (one === undefined) {
+            if (this.goodsDetail.quantity <= 0 && this.goodsDetail.inventory_status === 1) return;
+            shopCartList.push(this.getBeginAdd())
+          } else {
+            if (this.goodsDetail.quantity - one.count < 1 && this.goodsDetail.inventory_status === 1) return;
+            if (this.goodsDetail.quantity - one.count > this.selectedCount) {
+              one.count += this.selectedCount;
+            } else if (this.goodsDetail.inventory_status === 1) {
+              one.count = this.goodsDetail.quantity;
+            } else {
+              one.count += this.selectedCount;
+            }
+          }
+        }
+        this.selectedCount = 0;
+        this.$store.commit("shopCartList", shopCartList);
+      },
+      getBeginAdd() {
+        return {
+          "id": this.goodsDetail.id,
+          "name": this.goodsDetail.name,
+          "count": this.selectedCount,
+          "amount": this.goodsDetail.amount,
+          "photo": this.goodsDetail.photo,
+          "specItem": "",
+          "remarkList": [],
+          "inventory_status": this.goodsDetail.inventory_status,
+          "goods_quantity": this.goodsDetail.quantity,
+          "discount": this.goodsDetail.discount
+        };
+      },
+      flyBall(event) {
+        let flyObj = $('<div style="z-index: 10000;border-radius: 50%;background:red;width:15px;height:15px;"></div>');
+        flyObj.fly({
+          start: {
+            left: event.pageX - 20,
+            top: event.pageY - 20
+          },
+          end: {
+            left: document.getElementsByClassName('left')[0].offsetLeft + 40,
+            top: document.getElementsByClassName('left')[0].offsetTop,
+            width: 20,
+            height: 20
+          },
+          onEnd: function () {
+            $(flyObj).remove()
+          }
+        });
+      },
+      buyNow() {
+        if (this.selectedCount <= 0) {
+          this.$danMessageBox('请添加份数');
+          return;
+        }
+
+        let buyOneGoods = {
+          "id": this.goodsDetail.id,
+          "name": this.goodsDetail.name,
+          "count": this.selectedCount,
+          "amount": this.goodsDetail.amount,
+          "photo": this.goodsDetail.photo,
+          "specItem": "",
+          "remarkList": [],
+          "inventory_status": this.goodsDetail.inventory_status,
+          "goods_quantity": this.goodsDetail.quantity,
+          "discount": this.goodsDetail.discount
+        };
+
+        this.$store.commit('buyNow', true);
+        this.$store.commit('buyOneGoods', buyOneGoods);
+
+        this.$router.replace({
+          path: '/addOrder',
+          name: 'AddOrder',
+          params: {
+            userInfo: this.$store.getters.userInfo
+          }
+        })
+      },
+      initData() {
+        this.isLoading = true;
+        this.goodsInfo = this.$route.params.goodsInfo
+        if (this.goodsInfo.hasOwnProperty('specificationInfoList')) {
+          this.goodsSpecList = this.goodsInfo.specificationInfoList
+        }
+        if (this.$route.query.name !== undefined) {
+          this.title = this.$route.query.name;
+        }
+        if (this.$route.query.id !== undefined) {
+          httpClient.getGoodsDetail(this.$route.query.id).then(result => {
+            if (result.data.result_code === "ok") {
+              this.goodsDetail = result.data.goods;
+            } else {
+
+            }
+            this.isLoading = false;
+          })
+        }
+      },
+      selectSpec() {
+
+      }
+    },
+    created() {
+      this.initData();
+    },
+    mounted() {
+      this.scroll = new BScroll(this.$refs.wrapper, {
+        click: true,
+        tap: true,
+        mouseWheel: true
+      });
+    },
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.$data.fromObj = from;
+      })
+    }
+  }
+</script>
+
+<style scoped lang="less">
+  @import "../assets/css/common";
+
+  #goods-detail {
+
+    .wrapper {
+      height: @primary-content-height;
+    }
+
+    .content {
+      .photo {
+        > :nth-child(1) {
+          height: 35vh;
+          width: 100%;
+          background-size: cover;
+          background-color: @primary-disable-light-color;
+
+          svg {
+            width: 100%;
+            height: inherit;
+            fill: @primary-disable-color;
+          }
+        }
+      }
+
+      .description {
+        background-color: white;
+        padding: @space-width;
+
+        > :nth-child(1) {
+          display: inline-block;
+          font-size: 1.5rem;
+          margin: 8px 0;
+        }
+
+        > :nth-child(3) {
+          display: flex;
+          flex-flow: row wrap;
+
+          .spec-item {
+            width: 20%;
+            border-radius: 15px;
+            border: 1px solid #fd2c2c;
+            color: #fd2c2c;
+            padding: 5px;
+            margin: 10px;
+            font-size: 14px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+          }
+
+          .spec-item-active {
+            color: white !important;
+            background: rgba(237, 91, 91, 1);
+            box-shadow: 0px 0px 4px 0px rgba(237, 91, 91, 1);
+          }
+        }
+
+        > :nth-child(2) {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          > :nth-child(1) {
+            color: @primary-disable-color;
+            font-size: 0.8rem;
+          }
+
+          > :nth-child(2) {
+            color: @primary-color;
+            font-size: 1.2rem;
+
+            :nth-child(2) {
+              font-size: 12px;
+              color: #cccccc;
+              text-decoration: line-through;
+            }
+          }
+        }
+      }
+
+      .operation {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        height: calc(10vw + 10px);
+        background-color: white;
+        padding: 5px @space-width;
+        font-size: 6vw;
+
+        .addSub {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+
+          @icon-size: 6vw;
+
+          .icon-btn {
+            width: @icon-size;
+            height: @icon-size;
+            background-color: @primary-color;
+            border-radius: 50%;
+
+            svg {
+              width: @icon-size;
+              height: @icon-size;
+              .common-center;
+              fill: white;
+            }
+          }
+
+          span {
+            margin: 0 2vw;
+          }
+        }
+      }
+    }
+
+    .bottom {
+      height: @common-navigation-bar-height;
+      background-color: white;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 999;
+      position: relative;
+
+      @left-width: 80px;
+      @right-width: 70vw;
+
+      .left {
+        position: relative;
+        width: @left-width;
+        height: inherit;
+
+        @icon-size: @left-width;
+
+        .shop-car-icon {
+          width: @icon-size;
+          height: inherit;
+          position: absolute;
+          .common-center;
+
+          svg {
+            width: 36px;
+            height: 36px;
+            fill: @primary-disable-color;
+          }
+        }
+
+        .shop-car-icon-active {
+          .shop-car-icon;
+          background-color: white;
+
+          svg {
+            fill: @primary-color;
+          }
+        }
+
+        .goods-count {
+          position: absolute;
+          top: 6px;
+          right: 14px;
+        }
+      }
+
+      .right {
+        width: calc(100% - @left-width);
+
+        @current-box-height: 38px;
+
+        .right-box {
+          height: @current-box-height;
+          display: flex;
+          flex-direction: row;
+          margin: 0 @space-width;
+
+          div {
+            width: 100%;
+            height: inherit;
+
+            color: white;
+            .common-center;
+          }
+
+          > :nth-child(1) {
+            background-color: @primary-color;
+            border-radius: @current-box-height/2;
+          }
+
+          > :nth-child(2) {
+            background-color: darkorange;
+            border-radius: 0 @current-box-height/2 @current-box-height/2 0;
+          }
+        }
+      }
+
+      .right-disable {
+        background-color: @primary-disable-light-color !important;
+        color: @primary-disable-color !important;
+      }
+    }
+  }
+
+</style>

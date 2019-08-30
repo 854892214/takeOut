@@ -1,0 +1,496 @@
+{
+  "categoryList": [
+    {
+      "createtime": "2019-03-08 16:50:46",
+      "goodsList": [
+        {
+          "amount": 11,
+          "createtime": "2019-04-04 19:13:41",
+          "discount": 1,
+          "id": 389,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "茶香",
+          "quantity": 0,
+          "status": 99,
+          "type": 1,
+          "updatetime": "2019-04-24 20:46:23"
+        },
+        {
+          "amount": 6,
+          "createtime": "2019-04-15 18:09:27",
+          "description": "kedan test 02",
+          "discount": 1,
+          "id": 419,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "dan奶茶01",
+          "quantity": 96,
+          "status": 99,
+          "type": 1,
+          "updatetime": "2019-04-16 09:50:13"
+        },
+        {
+          "amount": 66,
+          "createtime": "2019-04-15 18:45:31",
+          "discount": 1,
+          "id": 420,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "logo",
+          "quantity": 0,
+          "status": 99,
+          "type": 1,
+          "updatetime": "2019-04-16 09:53:13"
+        },
+        {
+          "amount": 669,
+          "createtime": "2019-04-15 18:49:29",
+          "discount": 1,
+          "id": 421,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "痛",
+          "quantity": 0,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 6,
+          "createtime": "2019-04-16 09:15:52",
+          "description": "kedan test 02",
+          "discount": 1,
+          "id": 422,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "dan奶茶02",
+          "quantity": 0,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 6,
+          "createtime": "2019-04-16 09:16:34",
+          "description": "kedan test 03",
+          "discount": 1,
+          "id": 423,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "dan奶茶03",
+          "quantity": 98,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 6,
+          "createtime": "2019-04-16 09:51:11",
+          "description": "kedan test 03",
+          "discount": 1,
+          "id": 424,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "dan奶茶03",
+          "quantity": 87,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 6,
+          "createtime": "2019-04-16 09:52:17",
+          "description": "kedan test 04",
+          "discount": 1,
+          "id": 425,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "dan奶茶04",
+          "quantity": 0,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 10.5,
+          "createtime": "2019-03-08 16:52:45",
+          "discount": 1,
+          "id": 181,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "波霸奶茶",
+          "photo": "http://m.huarenhulian.com/BJVRTDXEFRBPMYPSITSPSH",
+          "quantity": 6,
+          "status": 99,
+          "type": 1,
+          "updatetime": "2019-03-13 11:06:41"
+        },
+        {
+          "amount": 0,
+          "createtime": "2019-03-08 16:53:29",
+          "discount": 1,
+          "id": 182,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "珍珠奶茶",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 9,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 30,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 188,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "芒果布丁",
+          "photo": "http://m.huarenhulian.com/DWMOWJRKKRTBOBNPDINQQM",
+          "quantity": 0,
+          "status": 0,
+          "storeLogicPrintDevice": {
+            "createtime": "2019-04-29 16:12:17",
+            "id": 18,
+            "name": "后厨",
+            "printDevice": {
+              "createtime": "2019-05-08 11:47:43.0",
+              "format": "58",
+              "id": 47,
+              "name": "Microsoft XPS Document Writer",
+              "status": 0,
+              "updatetime": "2019-05-08 13:30:07.0"
+            }
+          },
+          "type": 1,
+          "updatetime": "2019-05-11 17:58:05"
+        },
+        {
+          "amount": 10,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 189,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "西米露一个个",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 0,
+          "status": 0,
+          "type": 1,
+          "updatetime": "2019-03-20 14:27:12"
+        },
+        {
+          "amount": 15,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 190,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "椰果奶茶",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 33,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 1,
+          "createtime": "2019-03-30 14:48:57",
+          "description": "饮料",
+          "discount": 1,
+          "id": 204,
+          "is_merge_print": 0,
+          "name": "酸梅汤",
+          "quantity": 1,
+          "status": 0,
+          "type": 0
+        }
+      ],
+      "id": 173,
+      "name": "奶茶",
+      "status": 0,
+      "type": 1
+    },
+    {
+      "createtime": "2019-03-08 16:50:54",
+      "goodsList": [
+        {
+          "amount": 12,
+          "createtime": "2019-03-08 16:54:12",
+          "discount": 1,
+          "id": 183,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "红烧鱼",
+          "photo": "http://m.huarenhulian.com/PRRAKCAKDGCWGKBEEBNXIJ",
+          "quantity": 30,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 25,
+          "createtime": "2019-03-08 16:54:33",
+          "discount": 1,
+          "id": 184,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "红烧牛腩",
+          "quantity": 12,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 30,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 191,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "红烧鲫鱼",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 83,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 50,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 192,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "大盘鸡",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 100,
+          "status": 0,
+          "type": 1,
+          "updatetime": "2019-03-20 14:46:38"
+        },
+        {
+          "amount": 20,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 193,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "水煮鱼",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 91,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 16,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 194,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "青椒肉丝",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 88,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 18.3,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 195,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "鱼香肉丝",
+          "photo": "http://m.huarenhulian.com/LTWZRVRWZUICNZJCSVXSQU",
+          "quantity": 98,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 1,
+          "createtime": "2019-03-13 11:28:53",
+          "discount": 1,
+          "id": 200,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "包菜",
+          "photo": "http://m.huarenhulian.com/LIAJCURDLPUMWRNFWUAWPA",
+          "quantity": 0,
+          "status": 99,
+          "type": 1
+        },
+        {
+          "amount": 10,
+          "createtime": "2019-03-13 11:34:03",
+          "discount": 1,
+          "id": 202,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "八宝鱼",
+          "quantity": 0,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 99999,
+          "createtime": "2019-03-13 11:38:58",
+          "discount": 1,
+          "id": 203,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "清蒸大白鲨",
+          "quantity": 5,
+          "status": 99,
+          "type": 1
+        }
+      ],
+      "id": 174,
+      "name": "双皮奶",
+      "status": 0,
+      "type": 1
+    },
+    {
+      "createtime": "2019-03-08 16:51:22",
+      "goodsList": [
+        {
+          "amount": 1,
+          "createtime": "2019-03-08 16:55:08",
+          "discount": 1,
+          "id": 185,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "可乐",
+          "photo": "http://m.huarenhulian.com/ROHRQPJCBZSHUROWWERLJS",
+          "quantity": 51,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 2,
+          "createtime": "2019-03-13 11:20:58",
+          "discount": 1,
+          "id": 198,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "冰菊",
+          "photo": "http://m.huarenhulian.com/CTKDSKQGYLPCDEPVDYTNUT",
+          "quantity": 0,
+          "status": 99,
+          "type": 0
+        },
+        {
+          "amount": 10,
+          "createtime": "2019-03-13 11:27:18",
+          "discount": 1,
+          "id": 199,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "冰露",
+          "photo": "http://m.huarenhulian.com/PZGORYDDJNKTBCHSKVOBAM",
+          "quantity": 0,
+          "status": 99,
+          "type": 1
+        }
+      ],
+      "id": 175,
+      "name": "冷饮",
+      "status": 0,
+      "type": 1
+    },
+    {
+      "createtime": "2019-03-08 16:51:32",
+      "goodsList": [
+        {
+          "amount": 1,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 186,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "米饭",
+          "photo": "http://m.huarenhulian.com/OXLBLUPGQWHKKVZUQZIQYN",
+          "quantity": 100,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 10,
+          "createtime": "2019-03-08 16:55:38",
+          "discount": 1,
+          "id": 187,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "馒头",
+          "photo": "http://m.huarenhulian.com/OXLBLUPGQWHKKVZUQZIQYN",
+          "quantity": 20,
+          "status": 0,
+          "type": 1
+        }
+      ],
+      "id": 176,
+      "name": "主食",
+      "status": 0,
+      "type": 1
+    },
+    {
+      "createtime": "2019-03-12 10:03:19",
+      "goodsList": [
+        {
+          "amount": 14,
+          "createtime": "2019-03-12 10:04:02",
+          "description": "测试1",
+          "discount": 1,
+          "id": 197,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "测试1",
+          "quantity": 15,
+          "status": 0,
+          "type": 1
+        },
+        {
+          "amount": 66,
+          "createtime": "2019-03-13 11:31:19",
+          "discount": 1,
+          "id": 201,
+          "inventory_status": 0,
+          "is_merge_print": 0,
+          "name": "八宝鱼",
+          "photo": "http://m.huarenhulian.com/KLBMKUCRFQLBUNJJHENPGZ",
+          "quantity": 0,
+          "status": 0,
+          "type": 1
+        }
+      ],
+      "id": 179,
+      "name": "荤菜",
+      "status": 0,
+      "type": 1
+    },
+    {
+      "createtime": "2019-03-12 10:03:31",
+      "goodsList": [],
+      "id": 180,
+      "name": "素菜",
+      "status": 0,
+      "type": 1
+    },
+    {
+      "createtime": "2019-04-04 19:34:12",
+      "goodsList": [
+        {
+          "amount": 11,
+          "createtime": "2019-04-04 19:34:56",
+          "discount": 1,
+          "id": 390,
+          "inventory_status": 1,
+          "is_merge_print": 0,
+          "name": "你在",
+          "quantity": 0,
+          "status": 99,
+          "type": 1
+        }
+      ],
+      "id": 228,
+      "name": "肉类",
+      "status": 0,
+      "type": 1
+    }
+  ],
+  "result_code": "ok",
+  "result_msg": "SUCCESS"
+}

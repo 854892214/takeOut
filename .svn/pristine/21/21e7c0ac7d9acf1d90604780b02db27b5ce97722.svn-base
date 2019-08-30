@@ -1,0 +1,412 @@
+<template>
+  <div id="shopping-cart">
+    <common-header title="购物车"
+                   :option="headerOption"
+                   @clearShopCart="clearShopCart"></common-header>
+
+    <div class="null-list" v-if="shopCarList === null || shopCarList.length<=0">
+      <div class="box">
+        <div class="null-icon">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-gouwuche"></use>
+          </svg>
+        </div>
+        <div class="null-description">
+          您的购物车还是空的
+        </div>
+      </div>
+    </div>
+    <div class="wrapper" ref="wrapper" v-show="shopCarList !== null && shopCarList.length > 0">
+      <div class="good-list">
+        <div class="goods-item" v-for="(item,index) in shopCarList">
+          <div class="left">
+            <div class="goods-logo">
+              <div v-if="item.photo !== undefined">
+                <div class="goods-img" v-lazy:background-image="item.photo + '?x-oss-process=image/resize,w_180'"></div>
+              </div>
+              <div class="goods-img" v-if="item.photo === undefined">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-tupian"></use>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="top">
+              <div>
+                <div>{{item.name}}</div>
+              </div>
+              <div class="price">
+                $ {{totalAmount(item).toFixed(2)}}
+              </div>
+            </div>
+            <div class="spec">
+              <span v-for="(specificationInfo,i) of item.specItemList" :key="i">{{specificationInfo.name}}</span>
+            </div>
+            <div class="bottom">
+              <div>
+                <div class="goods-total-amount"><span>${{afterDiscountAmount(item).toFixed(2)}}</span><span class="discount" v-if="item.discount < 1">${{univalentAmount(item).toFixed(2)}}</span></div>
+              </div>
+              <div>
+                <div class="goods-quantity">
+                  <div class="icon-btn"
+                       @click.stop="subtractGoodsCount(item)">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-jian"></use>
+                    </svg>
+                  </div>
+                  <span class="cart-count">{{item.count}}</span>
+                  <div class="icon-btn"
+                       @click.stop="flyBall($event)||addGoodsCount(item)">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-jia"></use>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="settlement" v-if="shopCarList !== null && shopCarList.length>0">
+      <div class="left">
+        合计：${{appUtil.amountFormat(goodsAll.amount)}}
+      </div>
+      <div class="right" @click="addOrder()">
+        结算({{goodsAll.count}})
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import CommonHeader from "../components/CommonHeader";
+  import util from '../util';
+  import BScroll from 'better-scroll'
+
+  let fly = require('../assets/js/fly');
+
+  export default {
+    name: "ShoppingCart",
+    components: {CommonHeader},
+    data: function () {
+      return {
+        headerOption: []
+      }
+    },
+    computed: {
+      shopCarList: function () {
+        return this.$store.getters.shopCartList;
+      },
+      goodsAll: function () {
+        let count = 0;
+        let amount = 0;
+        if (this.$store.getters.shopCartList !== null) {
+          this.$store.getters.shopCartList.forEach(goods => {
+            count += goods.count;
+            amount = util.amountAdd(amount, this.totalAmount(goods));
+          });
+        }
+        return {
+          count: count,
+          amount: util.amountHandle(amount),
+        }
+      },
+
+    },
+    methods: {
+      clearShopCart() {
+        this.$danMessageBox('确定清空购物车?', () => {
+          this.$store.commit("shopCartList", [])
+        });
+      },
+      totalAmount(goods) {
+        return util.amountAdd(util.amountMul(util.amountMul(goods.amount,goods.discount), goods.count),util.amountMul(goods.specAmount,goods.count));
+      },
+      univalentAmount(goods) {
+        return util.amountAdd(goods.amount,goods.specAmount);
+      },
+      afterDiscountAmount(goods) {
+        return util.amountAdd(util.amountMul(goods.amount,goods.discount),goods.specAmount);
+      },
+      subtractGoodsCount(currentGoods) {
+        let shopCartList = this.$store.getters.shopCartList;
+        if (shopCartList !== null) {
+          shopCartList.forEach((goods, index) => {
+            if (goods.id === currentGoods.id && goods.specItem === currentGoods.specItem) {
+              goods.count -= 1;
+              if (goods.count !== 0) {
+              } else if (goods.count === 0) {
+                shopCartList.splice(index, 1);
+              }
+            }
+          });
+          this.$store.commit("shopCartList", shopCartList);
+        }
+      },
+      addGoodsCount(currentGoods) {
+        let shopCartList = this.$store.getters.shopCartList;
+        if (shopCartList !== null) {
+          shopCartList.forEach(goods => {
+            if (goods.id === currentGoods.id && goods.specItem === currentGoods.specItem && goods.goods_quantity - goods.count >= 1 || goods.inventory_status === 0) {
+              goods.count += 1;
+            }
+          });
+          this.$store.commit("shopCartList", shopCartList);
+        }
+      },
+      flyBall(event) {
+        let flyObj = $('<div style="z-index: 10000;border-radius: 50%;background:red;width:15px;height:15px;"></div>');
+        flyObj.fly({
+          start: {
+            left: event.pageX - 20,
+            top: event.pageY - 20
+          },
+          end: {
+            left: document.getElementsByClassName('navigationBar')[0].children[1].offsetLeft + 20,
+            top: document.getElementsByClassName('navigationBar')[0].children[1].offsetTop + 20,
+            width: 20,
+            height: 20
+          },
+          onEnd: function () {
+            $(flyObj).remove()
+          }
+        });
+      },
+      addOrder() {
+        if(this.$store.getters.isStoreUser === 'FALSE'){
+          this.$danMessageBox("用户不存在，请先注册!", () => {
+            this.$router.replace({
+              path: '/register'
+            })
+          },true);
+          return false;
+        }
+        if(this.goodsAll.amount <= 0){
+          return false;
+        }
+        if (this.shopCarList === null || this.shopCarList.length === 0) {
+          this.$danMessageBox('购物车当前为空，请先选择商品');
+          return false;
+        }
+
+        this.$store.commit('buyNow', false);
+
+        this.$router.replace({
+          path: "/addOrder",
+          name: "AddOrder",
+          params: {
+            userInfo: this.$store.getters.userInfo
+          }
+        });
+      }
+    },
+    created() {
+      this.headerOption.push({
+        icon: '#icon-qingkong',
+        title: '清空',
+        handler: "clearShopCart"
+      })
+    },
+    mounted() {
+      this.scroll = new BScroll(this.$refs.wrapper, {
+        click: true,
+        tap: true,
+        bounce: false,
+        mouseWheel: true
+      });
+    }
+  }
+</script>
+
+<style scoped lang="less">
+  @import "../assets/css/common";
+
+  #shopping-cart {
+    @space-width: 10px;
+      .wrapper {
+        height: calc(100vh - 44px - 50px - 50px);
+        overflow: hidden;
+      }
+
+      @img-size: 68px;
+
+      .goods-item {
+        margin-bottom: @space-width;
+        height: calc(@img-size + @space-width * 2);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        background-color: white;
+        padding: @space-width;
+
+        .left {
+          width: @img-size;
+          height: @img-size;
+          background-color: gainsboro;
+
+          .goods-logo {
+            width: @img-size;
+
+            .goods-img {
+              width: @img-size;
+              height: @img-size;
+              background: no-repeat center center;
+              background-size: cover;
+              border-radius: 3px;
+
+              svg {
+                width: @img-size;
+                height: @img-size;
+                fill: gray;
+              }
+            }
+          }
+        }
+
+        .right {
+          width: calc(100% - @img-size);
+          height: @img-size;
+          margin-left: @space-width;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          font-size: 1rem;
+          .bottom{
+            .goods-total-amount{
+              .discount{
+                text-decoration: line-through;
+                font-size: 14px;
+                padding-left: .3rem;
+              }
+            }
+          }
+          div {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            height: 20px;
+
+          }
+
+          .spec{
+            display: inline-block;
+            font-size: 0.8rem;
+            span{
+              background: #ED5B5B;
+              color: #fff;
+              border-radius: 5px;
+              padding: 2px 5px;
+              margin-right: 10px;
+            }
+          }
+
+          @icon-size: 20px;
+
+          .top {
+            .close-goods {
+              width: @icon-size;
+              height: @icon-size;
+              border-radius: 50%;
+              .common-center;
+
+              svg {
+                width: @icon-size;
+                height: @icon-size;
+              }
+            }
+          }
+
+          .bottom {
+            .goods-quantity {
+              .icon-btn {
+                width: @icon-size;
+                height: @icon-size;
+                background-color: @primary-color;
+                border-radius: 50%;
+
+                svg {
+                  width: @icon-size;
+                  height: @icon-size;
+                  .common-center;
+                  fill: white;
+                }
+              }
+
+              span {
+                margin: 0 8px;
+              }
+            }
+
+            > :nth-child(2) {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+            }
+          }
+        }
+      }
+
+      .null-list {
+        .common-center;
+        height: 38vh;
+        width: 100%;
+
+        .box {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .null-icon {
+            width: 6rem;
+            height: 6rem;
+            background-color: @primary-light-color;
+            border-radius: 50%;
+            .common-center;
+
+            svg {
+              width: 4rem;
+              height: 4rem;
+              fill: @primary-color;
+            }
+          }
+
+          .null-description {
+            margin-top: @space-width;
+            font-size: 1rem;
+            color: gray;
+          }
+        }
+      }
+    }
+
+    .settlement {
+      height: @common-navigation-bar-height;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      @button-width: 98px;
+
+      .left {
+        width: calc(100vw - @button-width);
+        height: 50px;
+        background-color: white;
+        .common-column-center;
+        padding-left: @space-width;
+      }
+
+      .right {
+        width: @button-width;
+        height: 50px;
+        background-color: @primary-color;
+        color: white;
+
+        .common-center;
+      }
+
+  }
+</style>

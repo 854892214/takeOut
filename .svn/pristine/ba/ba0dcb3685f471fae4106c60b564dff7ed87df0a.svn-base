@@ -1,0 +1,168 @@
+import moment from "moment-timezone";
+
+export default {
+  amountMul(a, b) {
+    return (a * 100 * b * 100) / (100 * 100)
+  },
+  amountAdd(a, b) {
+    return (a * 100 + b * 100) / 100
+  },
+  amountSub(a, b) {
+    return (a * 100 - b * 100) / 100
+  },
+  amountHandle(amount) {
+    return amount;
+  },
+  amountFormat(amount) {
+    if (amount === undefined) {
+      return '';
+    }
+    return amount.toFixed(2);
+  },
+  //保留小数点
+  round: function (old, len) {
+    var a1 = Math.pow(10, len) * (old * 1000);
+    a1 = a1 / 1000;
+    a1 = Math.round(a1);
+    var oldstr = old.toString();
+    var start = oldstr.indexOf(".");
+    if (start > 0 && oldstr.split(".")[1].length == len + 1) {
+      if (oldstr.substr(len + 1, 1) == 5) {
+        var flagval = oldstr.substr(len, 1) - 0;
+        if (flagval % 2 == 0) {
+          a1 = a1 - 1;
+        }
+      }
+    }
+    var b1 = a1 / Math.pow(10, len);
+    return b1;
+  },
+  //截取当前地址栏的指定参数的值
+  spliceRouter(name) {
+    var index = window.location.href.lastIndexOf("?");
+    var seachURL = window.location.href.substring(index + 1);
+    var str = seachURL.split("&");
+    for (var i = 0; i < str.length; i++) {
+      var str1 = str[i].split("=");
+      if (str1[0] == name) {
+        return decodeURIComponent(str1[1]);
+      }
+    }
+  },
+  isWx: function () {
+    let e = navigator.userAgent.toLowerCase();
+    return "micromessenger" == e.match(/MicroMessenger/i);
+  },
+  isAli: function () {
+    let e = navigator.userAgent.toLowerCase();
+    return "alipayclient" == e.match(/AlipayClient/i);
+  },
+  closeClient() {
+    if (this.isWx()) {
+      this.closeWx();
+      return;
+    }
+    if (this.isAli()) {
+      this.closeAli();
+      return;
+    }
+    history.back();
+  },
+  closeWx() {
+    function e() {
+      WeixinJSBridge.invoke("closeWindow", {},
+        function (e) {
+        })
+    }
+
+    if ("undefined" == typeof WeixinJSBridge) {
+      if (document.addEventListener) {
+        document.addEventListener("WeixinJSBridgeReady", e, !1)
+      } else {
+        document.attachEvent && (document.attachEvent("WeixinJSBridgeReady", e), document.attachEvent("onWeixinJSBridgeReady", e))
+      }
+    } else {
+      e()
+    }
+  },
+  isEmpty(obj){
+    return obj === undefined || obj === "" || obj === null
+  },
+  paymentMethodHandler(paymentMethod) {
+    switch (paymentMethod) {
+      case 'CASH':
+        return '现金';
+      case 'CREDIT_CARD':
+        return '信用卡';
+      case 'ALIPAY':
+        return '支付宝';
+      case 'WECHATPAY':
+        return '微信支付';
+      default:
+        return '';
+    }
+  },
+  closeAli() {
+    AlipayJSBridge.call("closeWebview");
+  },
+  toTimeZone(date, fromOffset, toOffset) {
+    let currTz = moment.tz(date, fromOffset);
+    return currTz.clone().tz(toOffset).format("YYYY-MM-DD HH:mm:ss");
+  },
+  commonBlur() {
+    window.scrollTo(0, 0);
+  },
+  // js 点击复制到剪贴板函数
+  copyToClipboard(s) {
+    if (window.clipboardData) {
+      window.clipboardData.setData('text', s);
+    } else {
+      (function (s) {
+        document.oncopy = function (e) {
+          e.clipboardData.setData('text', s);
+          e.preventDefault();
+          document.oncopy = null;
+        }
+      })(s);
+      document.execCommand('Copy');
+    }
+  },
+  dateComputed(pickUpDataTime, timeZone) {
+    // this.goodsOrderInfo.tack_out_time
+    let pickUpDate = moment(pickUpDataTime).format("YYYY-MM-DD");
+    // let timeZone = this.$store.getters.nowTimeZone;
+    let today = moment.tz(timeZone).format("YYYY-MM-DD"); //时区当前时间
+    let yesterday = moment.tz(timeZone).subtract(1, "days").format("YYYY-MM-DD"); //时区当前时间的前1天时间
+    let tomorrow = moment.tz(timeZone).add(1, 'days').format("YYYY-MM-DD");
+    let showTimeText = pickUpDataTime
+    let pickUpTime = moment(pickUpDataTime).format("HH:mm")//自提时间时分
+    if (pickUpDate == today) {
+      showTimeText = "(今天)" + pickUpTime
+    }
+    if (pickUpDate == yesterday) {
+      showTimeText = "(昨天)" + pickUpTime
+    }
+    if (pickUpDate == tomorrow) {
+      showTimeText = "(明天)" + pickUpTime
+    }
+    return showTimeText;
+  },clearNoNum(value) {
+    isNaN(value) || value == "" ? (value = "0") : "";
+    value = value.replace(/[^\d.]/g, "");
+    value = value.replace(/\.{2,}/g, ".");
+    value = value.replace(/^\./g, "");
+    value = value
+      .replace(".", "$#$")
+      .replace(/\./g, "")
+      .replace("$#$", ".");
+    value = value.replace(/^(\-)*(\d+)\.(\d\d).*$/, "$1$2.$3");
+    return value;
+  },
+  isEmptyObject(obj){
+    for(let key in obj){
+      return false;
+      break;
+    };
+    return true
+  }
+}
