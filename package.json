@@ -15,7 +15,7 @@
     "less": "3.9.0",
     "less-loader": "4.1.0",
     "moment-timezone": "0.5.26",
-    "qs": "6.7.0",
+    "qs": "6.7.3",
     "style-loader": "0.23.1",
     "vue": "2.6.10",
     "vue-router": "3.0.7"
@@ -47,7 +47,7 @@
     "postcss-import": "11.1.0",
     "postcss-loader": "2.1.6",
     "postcss-url": "7.3.2",
-    "qs": "6.7.0",
+    "qs": "6.7.3",
     "rimraf": "2.6.3",
     "semver": "5.7.0",
     "shelljs": "0.7.8",
